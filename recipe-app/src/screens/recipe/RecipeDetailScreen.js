@@ -14,7 +14,6 @@ const screenWidth = Dimensions.get("window").width;
 const RecipeDetailScreen = ({ route, navigation }) => {
   const { recipe, setRecipes } = route.params;
   const [title, setTitle] = useState(recipe.title);
-  console.log('recipe data', recipe)
   const [recipeTypes, setRecipeTypes] = useState(recipe.recipeTypes);
   const [ingredients, setIngredients] = useState(recipe.ingredients);
   const [steps, setSteps] = useState(recipe.steps);
