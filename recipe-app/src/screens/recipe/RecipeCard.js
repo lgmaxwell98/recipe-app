@@ -10,19 +10,17 @@ import { useNavigation } from "@react-navigation/native";
 const screenWidth = Dimensions.get("window").width;
 
 const RecipeCard = (props) => {
-	const { data } = props;
+	const { data, setRecipes } = props;
 	const navigation = useNavigation();
 
 	const imageSource = data.imageUri ? data.imageUri
 		: noImage;
 
-		console.log('imageSource', imageSource)
-
 	return (
 		<TouchableOpacity
-			onPress={() => navigation.push("RecipeDetailScreen", { recipe: data })}
+			onPress={() => navigation.push("RecipeDetailScreen", { recipe: data, setRecipes })}
 		>
-			<View style={styles.cardContainer}>
+			<View style={styles.cardContainer} key={data.id}>
 				<View
 					style={{
 						aspectRatio: 1 / 1,

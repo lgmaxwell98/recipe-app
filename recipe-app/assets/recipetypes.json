@@ -1,5 +1,8 @@
 [
-    {"id" : 1, "name": "Dessert"},
-    {"id" : 1, "name": "Chicken"},
-    {"id" : 1, "name": "Burger"}
+    {"id": 1, "name": "Dessert"},
+    {"id": 2, "name": "Pizza"},
+    {"id": 3, "name": "Burger"},
+    {"id": 4, "name": "Seafood"},
+    {"id": 5, "name": "Vegetarian"},
+    {"id": 6, "name": "Pasta"}
 ]

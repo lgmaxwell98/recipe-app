@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useLayoutEffect } from 'react';
 import {
   View,
   Text,
@@ -8,17 +8,40 @@ import {
   TouchableOpacity,
   Image,
   Alert,
+  ScrollView,
+  Platform,
+  KeyboardAvoidingView
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as ImagePicker from 'expo-image-picker';
 import * as FileSystem from 'expo-file-system';
+import DropDownPicker from 'react-native-dropdown-picker';
+const recipetypes  = require('../../../assets/recipetypes.json');
 
 const CreateRecipeScreen = ({ navigation }) => {
+
   const [title, setTitle] = useState('');
-  const [type, setType] = useState('');
+  const [recipeTypes, setRecipeTypes] = useState('');
   const [ingredients, setIngredients] = useState('');
   const [steps, setSteps] = useState('');
   const [imageUri, setImageUri] = useState(null);
+
+    // Dropdown states
+  const [open, setOpen] = useState(false); // Controls dropdown visibility
+  const [items, setItems] = useState([]); // Dropdown options
+
+    // Load recipe types from JSON into dropdown
+  useEffect(() => {
+    const loadRecipeTypes = () => {
+      const dropdownItems = recipetypes.map((item) => ({
+        label: item.name,
+        value: item.name,
+      }));
+      setItems(dropdownItems);
+    };
+
+    loadRecipeTypes();
+  }, []);
 
   const pickImage = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
@@ -42,7 +65,7 @@ const CreateRecipeScreen = ({ navigation }) => {
   };
 
   const saveRecipe = async () => {
-    if (!title || !type || !ingredients || !steps || !imageUri) {
+    if (!title || !recipeTypes || !ingredients || !steps || !imageUri) {
       Alert.alert('Error', 'Please fill all fields and add an image.');
       return;
     }
@@ -51,10 +74,10 @@ const CreateRecipeScreen = ({ navigation }) => {
       const newRecipe = {
         id: Date.now().toString(),
         title,
-        type,
+        recipeTypes,
         imageUri,
-        ingredients: ingredients.split(',').map((item) => item.trim()),
-        steps: steps.split('.').map((item) => item.trim()),
+        ingredients: ingredients,
+        steps: steps
       };
 
       const storedRecipes = await AsyncStorage.getItem('recipes');
@@ -70,50 +93,74 @@ const CreateRecipeScreen = ({ navigation }) => {
   };
 
   return (
+    <KeyboardAvoidingView
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      style={{ flex: 1, backgroundColor: "white" }}
+    >
+
     <View style={styles.container}>
-      <Text style={styles.label}>Recipe Title:</Text>
-      <TextInput
-        style={styles.input}
-        value={title}
-        onChangeText={setTitle}
-        placeholder="Enter title"
-      />
+      <ScrollView
+          showsVerticalScrollIndicator={false}
+					style={{ backgroundColor: "white" }}
+      >
+        
+        <Text style={styles.label}>Recipe Title:</Text>
+        <TextInput
+          style={styles.input}
+          value={title}
+          onChangeText={setTitle}
+          placeholder="Enter recipe title"
+        />
 
-      <Text style={styles.label}>Recipe Type:</Text>
-      <TextInput
-        style={styles.input}
-        value={type}
-        onChangeText={setType}
-        placeholder="Enter type"
-      />
+        <Text style={styles.label}>Recipe Type:</Text>
+        <DropDownPicker
+          open={open}
+          value={recipeTypes}
+          items={items}
+          setOpen={setOpen}
+          setValue={setRecipeTypes}
+          setItems={setItems}
+          placeholder="Select a recipe type"
+          containerStyle={{ marginVertical: 10 }}
+          style={styles.dropdown}
+          dropDownContainerStyle={styles.dropdownContainer}
+        />
 
-      <Text style={styles.label}>Ingredients (comma-separated):</Text>
-      <TextInput
-        style={styles.input}
-        value={ingredients}
-        onChangeText={setIngredients}
-        placeholder="e.g., Salt, Pepper, Chicken"
-      />
+        <Text style={styles.label}>Ingredients:</Text>
+        <TextInput
+          style={styles.bigInput}
+          multiline={true}
+          numberOfLines={10}
+          value={ingredients}
+          onChangeText={setIngredients}
+          placeholder="e.g., Salt, Pepper, Chicken"
+        />
 
-      <Text style={styles.label}>Steps (period-separated):</Text>
-      <TextInput
-        style={styles.input}
-        value={steps}
-        onChangeText={setSteps}
-        placeholder="e.g., Step 1. Step 2. Step 3."
-      />
+        <Text style={styles.label}>Steps:</Text>
+        <TextInput
+          multiline={true}
+          numberOfLines={10}
+          style={styles.bigInput}
+          value={steps}
+          onChangeText={setSteps}
+          placeholder="e.g., 1.... 2.... 3...."
+        />
 
-      <TouchableOpacity onPress={pickImage} style={styles.imagePicker}>
-        <Text style={styles.imagePickerText}>
-          {imageUri ? 'Change Image' : 'Pick an Image'}
-        </Text>
-      </TouchableOpacity>
-      {imageUri && (
-        <Image source={{ uri: imageUri }} style={styles.imagePreview} />
-      )}
+        <TouchableOpacity onPress={pickImage} style={styles.imagePicker}>
+          <Text style={styles.imagePickerText}>
+            {imageUri ? 'Edit Image' : 'Pick an Image'}
+          </Text>
+        </TouchableOpacity>
+        {imageUri && (
+          <Image source={{ uri: imageUri }} style={styles.imagePreview} />
+        )}
 
-      <Button title="Save Recipe" onPress={saveRecipe} />
+        <Button title="Save Recipe" onPress={saveRecipe} />
+      </ScrollView>
+
     </View>
+    </KeyboardAvoidingView>
+
   );
 };
 
@@ -131,7 +178,16 @@ const styles = StyleSheet.create({
     borderColor: '#ccc',
     padding: 8,
     borderRadius: 4,
+    marginVertical: 7,
+  },
+  bigInput: {
+    borderWidth: 1,
+    borderColor: '#ccc',
+    padding: 8,
+    borderRadius: 4,
     marginTop: 4,
+    height: 100,
+    textAlignVertical: 'top'
   },
   imagePicker: {
     marginTop: 16,
@@ -146,7 +202,7 @@ const styles = StyleSheet.create({
   },
   imagePreview: {
     width: '100%',
-    height: 200,
+    height: 350,
     marginVertical: 16,
   },
 });

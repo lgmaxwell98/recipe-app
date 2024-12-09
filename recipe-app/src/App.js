@@ -11,10 +11,6 @@ export default function App() {
     <NavigationContainer>
       <Routes/>
     </NavigationContainer>
-    // <View style={styles.container}>
-    //   <Text>Welcome to Recipe App!</Text>
-    //   <StatusBar style="auto" />
-    // </View>
   );
 }
 

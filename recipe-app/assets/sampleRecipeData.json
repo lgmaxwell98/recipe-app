@@ -1,0 +1,18 @@
+[
+  {
+    "id": 1,
+    "title": "Chocolate Cake",
+    "recipeTypes": "Dessert",
+    "imageUri": "https://i1.wp.com/www.scientificallysweet.com/wp-content/uploads/2020/09/IMG_4087-feature-1.jpg?fit=1500%2C1500",
+    "ingredients": "chocolate, salt",
+    "steps": "boil. fry."
+  },
+  {
+    "id": 2,
+    "title": "Pasta Carbonara",
+    "recipeTypes": "Pasta",
+    "imageUri": "https://thestayathomechef.com/wp-content/uploads/2020/03/Pasta-Carbonara-2-3-scaled.jpg",
+    "ingredients": "pasta, cheese",
+    "steps": "steam. bake."
+  }
+]
